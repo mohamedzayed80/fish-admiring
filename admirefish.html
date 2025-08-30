@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fish Admiration Protocol</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Cute+Font&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0d1a 100%);
+            color: #ff69b4;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.1;
+            z-index: 1;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-size: 14px;
+            color: #ff1493;
+            animation: matrix-fall linear infinite;
+            font-family: monospace;
+        }
+        
+        @keyframes matrix-fall {
+            to {
+                top: 100%;
+            }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .glitch {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            position: relative;
+            color: #ff69b4;
+            letter-spacing: 0.1em;
+            animation: glitch-skew 1s infinite linear alternate-reverse;
+            text-shadow: 
+                0.05em 0 0 #00ffff,
+                -0.05em -0.025em 0 #ff00ff,
+                0.025em 0.05em 0 #ffff00;
+            margin-bottom: 10px;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitch-1 0.5s infinite;
+            color: #00ffff;
+            z-index: -1;
+        }
+        
+        .glitch::after {
+            animation: glitch-2 0.5s infinite;
+            color: #ff00ff;
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0% {
+                clip: rect(44px, 450px, 56px, 0);
+                transform: skew(0.5deg);
+            }
+            20% {
+                clip: rect(22px, 450px, 78px, 0);
+                transform: skew(0.2deg);
+            }
+            40% {
+                clip: rect(85px, 450px, 31px, 0);
+                transform: skew(-0.5deg);
+            }
+            60% {
+                clip: rect(12px, 450px, 91px, 0);
+                transform: skew(0.8deg);
+            }
+            80% {
+                clip: rect(61px, 450px, 43px, 0);
+                transform: skew(-0.2deg);
+            }
+            100% {
+                clip: rect(25px, 450px, 77px, 0);
+                transform: skew(0.3deg);
+            }
+        }
+        
+        @keyframes glitch-2 {
+            0% {
+                clip: rect(65px, 450px, 119px, 0);
+                transform: skew(-0.5deg);
+            }
+            20% {
+                clip: rect(88px, 450px, 29px, 0);
+                transform: skew(0.4deg);
+            }
+            40% {
+                clip: rect(11px, 450px, 95px, 0);
+                transform: skew(0.5deg);
+            }
+            60% {
+                clip: rect(42px, 450px, 73px, 0);
+                transform: skew(-0.8deg);
+            }
+            80% {
+                clip: rect(58px, 450px, 106px, 0);
+                transform: skew(0.2deg);
+            }
+            100% {
+                clip: rect(33px, 450px, 82px, 0);
+                transform: skew(-0.3deg);
+            }
+        }
+        
+        @keyframes glitch-skew {
+            0% {
+                transform: skew(0deg);
+            }
+            20% {
+                transform: skew(2deg);
+            }
+            40% {
+                transform: skew(-2deg);
+            }
+            60% {
+                transform: skew(1deg);
+            }
+            80% {
+                transform: skew(-1deg);
+            }
+            100% {
+                transform: skew(0deg);
+            }
+        }
+        
+        .subtitle {
+            color: #ff1493;
+            font-size: 1.5rem;
+            font-family: 'Cute Font', cursive;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        
+        .message-container {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ff69b4;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 
+                0 0 20px rgba(255, 105, 180, 0.5),
+                inset 0 0 20px rgba(255, 20, 147, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .message-container::before {
+            content: '⬤ ⬤ ⬤';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            color: #ff69b4;
+            font-size: 12px;
+            letter-spacing: 5px;
+        }
+        
+        .admiration-message {
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ff69b4;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+        
+        .admiration-message br {
+            display: block;
+            content: "";
+            margin-bottom: 10px;
+        }
+        
+        .exit-message {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #00ffff;
+            animation: pulse 2s infinite;
+        }
+        
+        .kitty-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 3rem;
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            z-index: 100;
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.7));
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+        
+        .neon-button {
+            background: transparent;
+            border: 2px solid #ff69b4;
+            color: #ff69b4;
+            padding: 12px 30px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            display: block;
+            margin: 30px auto;
+        }
+        
+        .neon-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 105, 180, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .neon-button:hover::before {
+            left: 100%;
+        }
+        
+        .neon-button:hover {
+            box-shadow: 
+                0 0 20px rgba(255, 105, 180, 0.8),
+                inset 0 0 20px rgba(255, 105, 180, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .social-link {
+            font-size: 1.5rem;
+            color: #ff69b4;
+            text-decoration: none;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .social-link:hover {
+            transform: scale(1.2) rotate(10deg);
+            color: #00ffff;
+            text-shadow: 0 0 10px currentColor;
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="glitch" data-text="FISH ADMIRATION">FISH ADMIRATION</h1>
+            <p class="subtitle">✨ Protocol Initiated ✨</p>
+        </header>
+        
+        <div class="message-container">
+            <div class="admiration-message">
+✨💖 FISH ADMIRATION PROTOCOL INITIATED 💖✨
+
+Why Fish is absolutely admirable:
+  • prettiest girl everrr ? (yes she is )          
+• She codes in C AND still has perfect fake piercings 💅
+• Breaks into systems while breaking hearts 💔 (not mine)
+• Can explain buffer overflows AND the perfect skincare routine 
+• Writes exploits that are more pretty than indian girls (anything will be prettier than an indian anyway ) 
+• Has a GitHub commit history that looks like childerns kindergarten books 
+• Turns kernel panics into kernel parties yaaay
+• Makes cybersecurity look like a fashion statement (wait till u grow a beard and gain 200kg)
+• Can decrypt your files AND your feelings 
+• Runs ubunutu inside WSL , almost like an insult to life itself
+• Her terminal has the same aesthetic as a 70 years old homosexual with aids  
+
+Simply put: How could anyone know Fish and NOT love her?  
+She's just 😔😔😭 
+Resistance is futile. Admiration is mandatory 💕
+            loving fish is a divine obligation, admiring fish ia a human duty, caring for fish is a natonal right  
+            </div>
+        </div>
+        
+        <p class="exit-message">whos the best fish ever and why is it u 😡
+         <br> For legal reasons, this is nOt flirting w 
+         <br> (i hate u 😡😡😔😓) </p>
+        
+        <button class="neon-button" onclick="hackTheMatrix()">HACK THE MATRIX</button>
+        
+        <div class="social-links">
+            <a href="#" class="social-link" title="GitHub">👾</a>
+            <a href="#" class="social-link" title="Twitter">🦄</a>
+            <a href="#" class="social-link" title="Discord">🎮</a>
+            <a href="#" class="social-link" title="LinkedIn">💼</a>
+        </div>
+    </div>
+    
+    <div class="kitty-float" onclick="kittyClick()">🎀</div>
+    
+    <script>
+
+
+        function createMatrixRain() {
+            const matrixBg = document.getElementById('matrixBg');
+            const characters = '01魚FISH♡♥✨🎀';
+            
+            for (let i = 0; i < 20; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                column.style.animationDelay = Math.random() * 5 + 's';
+                
+                let text = '';
+                for (let j = 0; j < 30; j++) {
+                    text += characters[Math.floor(Math.random() * characters.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                matrixBg.appendChild(column);
+            }
+        }
+        
+        createMatrixRain();
+        
+        let kittyClicks = 0;
+        function kittyClick() {
+            kittyClicks++;
+            if (kittyClicks === 7) {
+                const easterEgg = document.createElement('div');
+                easterEgg.textContent = '🐱‍💻';
+                easterEgg.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 5rem;
+                    animation: spin 2s linear infinite;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(easterEgg);
+                
+                setTimeout(() => {
+                    easterEgg.remove();
+                    kittyClicks = 0;
+                }, 3000);
+            }
+        }
+        
+        function hackTheMatrix() {
+            document.body.style.animation = 'glitch-skew 0.5s 5';
+            
+            const messages = ['ACCESS GRANTED', 'HACKING IN PROGRESS...', '1337 H4X0R', 'MEOW MEOW', '✨ MAGICAL ✨'];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            
+            const popup = document.createElement('div');
+            popup.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(255, 20, 147, 0.9);
+                color: white;
+                padding: 20px 40px;
+                border-radius: 10px;
+                font-size: 2rem;
+                font-weight: bold;
+                z-index: 1000;
+                animation: pulse 0.5s 3;
+            `;
+            popup.textContent = randomMsg;
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+                popup.remove();
+                document.body.style.animation = '';
+            }, 2000);
+        }
+        
+        console.log('%c🎀 Oh, you think you\'re clever checking the console? 🎀', 'color: #ff69b4; font-size: 20px; font-weight: bold;');
+        console.log('%cWell, here\'s a cookie for you: 🍪', 'color: #00ffff; font-size: 16px;');
+        console.log('%cflag{c0ns0l3_k1tty_f0und_y0u}', 'color: #00ff00; font-size: 14px; font-family: monospace;');
+    </script>
+</body>
+</html>
